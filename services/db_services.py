@@ -1,8 +1,10 @@
 from db import db, User 
 from faker import Faker
 
+
 def create(db):   
     db.create_all()
+    
 
 def populate(db):
     fake = Faker()
