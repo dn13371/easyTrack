@@ -73,11 +73,19 @@ def login():
             flash('wrong email')
             return redirect(url_for('login'))
 
+#logout
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('login'))
 
-#gayporn only for logged in users
+
+#lockedcontent only for logged in users
 @app.route('/lockedcontent')
 @login_required
-def gayporn(): 
+def lockedcontent(): 
     return ' only for logged in users'
 
 if __name__ == '__main__':
