@@ -82,11 +82,13 @@ def logout():
     return redirect(url_for('login'))
 
 
+
+
 #lockedcontent only for logged in users
 @app.route('/lockedcontent')
-@login_required
+#@login_required
 def lockedcontent(): 
-    return ' only for logged in users'
+    return render_template('dashboard.html')
 
 if __name__ == '__main__':
     app.run()

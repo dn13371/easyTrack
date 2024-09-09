@@ -16,3 +16,17 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password, password)
  
+class Project(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.String, nullable=False)
+    projectName = db.Column(db.String, nullable=False)
+    #status 1 = current, status 2 = archived
+    projectStatus = db.Column(db.String, nullable=False)
+
+class Timestamp(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    projectID = db.Column(db.String, nullable=False)
+    activity = db.Column(db.String, nullable=False)
+    startTime = db.Column(db.Time, nullable=False)
+    endTime = db.Column(db.Time, nullable=False)
+ 
