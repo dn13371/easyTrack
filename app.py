@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
-from db import db, User
+from db import db, User, Project
 import click
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from services import db_services
@@ -67,7 +67,7 @@ def login():
 
         if user and user.check_password(password): 
             login_user(user)
-            return redirect(url_for('lockedcontent'))
+            return redirect(url_for('dashboard'))
         
         else: 
             flash('wrong email')
@@ -85,10 +85,28 @@ def logout():
 
 
 #lockedcontent only for logged in users
-@app.route('/lockedcontent')
-#@login_required
-def lockedcontent(): 
-    return render_template('dashboard.html')
+@app.route('/dashboard')
+@login_required
+def dashboard(): 
+    user_id = current_user.id
+    projects = Project.query.filter_by(userID = user_id, projectStatus = 1).all()
+
+    return render_template('dashboard.html', projects = projects)
+
+#project page
+
+@app.route('/project/<int:project_id>')
+@login_required
+def project(project_id):
+    user_id = current_user.id
+    access = Project.query.filter_by(userID =user_id, id = project_id).first()
+    if access: 
+        return render_template('project.html', project_name = access.projectName)
+    
+    else: 
+        return 'no access'
+    
+
 
 if __name__ == '__main__':
     app.run()
