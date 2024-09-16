@@ -71,23 +71,16 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="{{ url_for('startTime', project_id=project.id) }}">  <!-- Wrap in anchor tag -->
-                            <div class="card text-white bg-primary">
+                            <div class="card text-white bg-primary", id="start_timer">
                                 <div class="card-body">
                                     <h5 class="card-title">Start</h5>
                                 </div>
                             </div>
-                        </a>
+                       
                     </div>
+
                     <div class="col-md-4">
-                        <div class="card text-white bg-success">
-                            <div class="card-body">
-                                <h5 class="card-title">Pause</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-warning">
+                        <div class="card text-white bg-danger", id = "end_timer">
                             <div class="card-body">
                                 <h5 class="card-title">Stop</h5>
                             </div>
@@ -97,11 +90,34 @@
 
                 <!-- Timer Section -->
                 <div class="row">
-                    <div class="col-lg-6">
-                        
+                    <div class="col-lg-12">
+                        <div class="card">
+                           
+                            <div class="card-body text-center p-4">
+                                <h5 class="card-title mb-4"> Timestamp</h5> <!-- A title for the countdown -->
+                                <div class="countdown d-flex justify-content-center align-items-center" id="countdown">
+                                    <div class="countdown-item mx-2 text-center">
+                                        <span id="days" class="display-4">00</span>
+                                        <p class="small text-muted">Days</p>
+                                    </div>
+                                    <div class="countdown-item mx-2 text-center">
+                                        <span id="hours" class="display-4">00</span>
+                                        <p class="small text-muted">Hours</p>
+                                    </div>
+                                    <div class="countdown-item mx-2 text-center">
+                                        <span id="minutes" class="display-4">00</span>
+                                        <p class="small text-muted">Minutes</p>
+                                    </div>
+                                    <div class="countdown-item mx-2 text-center">
+                                        <span id="seconds" class="display-4">00</span>
+                                        <p class="small text-muted">Seconds</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
 
                 <!-- Recent Timestamp -->
                 <div class="row">
@@ -157,10 +173,81 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- Ajax for start button -->
+   
     <script>
+        //hide start button if timer is running 
+        let runningtimer = {{running}};
+        let timediff  = {{seconds}};
         
-        
+        if (runningtimer === 1){
+            const startButton = document.getElementById('start_timer');
+            startButton.style.visibility = 'hidden';
+            startButton.style.pointerEvents = 'none';
+        };
+        //function to update the timer 
+
+
+
+
+
+        // start button DIE BUTTONS FUNKTIONIEREN ENDLICH HIER NIX ANFASSEN NIEMALS 
+       document.getElementById('start_timer').addEventListener('click', function(){
+       const projectID = {{ project.id }}; 
+       const button = this;
+       const stopbutton = document.getElementById('end_timer');
+       stopbutton.style.visibility = '';
+       stopbutton.style.pointerEvents = '';
+       button.style.visibility = 'hidden';
+       button.style.pointerEvents = 'none';
+        fetch(`/start/${projectID}`, {  method:'POST',
+        headers: {
+        'Content-Type': 'application/json',}})
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {alert('Timer started successfully!');
+
+        } 
+            else {alert('Failed to start timer.'); 
+                button.style.backgroundColor = '';
+                button.style.pointerEvents = '';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            button.style.backgroundColor = '';
+            button.style.pointerEvents = '';
+
+        });
+        });
+        //end button 
+        document.getElementById('end_timer').addEventListener('click', function(){
+       const projectID = {{ project.id }};
+       const button = this;
+       const startbutton = document.getElementById('start_timer');
+       button.style.visibility = 'hidden';
+       button.style.pointerEvents = 'none'; 
+       startbutton.style.visibility = '';
+       startbutton.style.pointerEvents = '';
+        fetch(`/stop/${projectID}`, {  method:'POST',
+        headers: {
+        'Content-Type': 'application/json',}})
+        .then(response => response.json())
+        .then(data => {if (data.success) {
+            alert('Timer stopped successfully!');
+
+        } 
+        else {alert('Failed to stop timer.'); 
+        button.style.visibility = '';
+        button.style.pointerEvents = '';
+        }})
+        .catch(error => {console.error('Error:', error)
+        button.style.visibility = '';
+        button.style.pointerEvents = '';
+        });
+        });
     </script>
 </body>
 </html>
+
+
+

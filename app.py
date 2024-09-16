@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, flash, session, redirect, url_for
 from db import db, User, Project, Timestamp
 import click
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -103,7 +103,18 @@ def project(project_id):
         user_id = current_user.id
         access = Project.query.filter_by(userID =user_id, id = project_id).first()
         if access: 
-            return render_template('project.html', project = access)
+            runningTimestamp = Timestamp.query.filter_by(projectID = project_id, endTime = None).first()
+            if runningTimestamp: 
+                running = 1
+                now = datetime.datetime.now()
+                diff = now - runningTimestamp.startTime
+                timediff = diff.seconds
+
+
+            else:
+                running = 0 
+                timediff = None   
+            return render_template('project.html', project = access, running  = running, seconds = timediff)
           #  return render_template('project.html', project_name = access.projectName, project_id = access.id)
     
         else: 
@@ -114,19 +125,20 @@ def project(project_id):
 
 #timer control routes
 @app.route('/start/<int:project_id>', methods = ['POST'])
+@login_required
 def startTime(project_id):
-    if request.method == 'GET':
+    if request.method == 'POST':
         user_id = current_user.id
         access = Project.query.filter_by(userID =user_id, id = project_id).first()
         if access: 
-            #timestamp = Timestamp(projectID=project_id,startTime = None, endTime = None)
-            return('asd')
-            #db.session.add(timestamp)
-            
-            #db.session.commit()
+            timestamp = Timestamp(projectID=project_id,startTime = datetime.datetime.now(), endTime = None)
+            db.session.add(timestamp)
+            db.session.commit()
+            return jsonify({'success': True}) 
+
             
         else: 
-            return 'no access'
+            return jsonify({'success': False}), 403 
         
 @app.route('/stop/<int:project_id>', methods = ['POST'])
 def stopTime(project_id):
@@ -135,13 +147,15 @@ def stopTime(project_id):
         access = Project.query.filter_by(userID =user_id, id = project_id).first()
         if access: 
             ##see if there is a timer already running (only starttime, no endtime)
-            currentTimestamp = Timestamp.query(projectID = project_id, endTime = None)
+            currentTimestamp = Timestamp.query.filter_by(projectID = project_id, endTime = None).first()
             if currentTimestamp: 
                 currentTimestamp.endTime = datetime.datetime.now()
+                db.session.commit()
+                return jsonify({'success': True}) 
             else: 
-                return 'no timestamp to be stopped'
+                return jsonify({'success': False}) , 403
         else: 
-            return 'no access'
+            return jsonify({'success': False}) , 403
         
 
 
