@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
-from db import db, User, Project
+from flask import Flask, render_template, request, flash, session, redirect, url_for
+from db import db, User, Project, Timestamp
 import click
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from services import db_services
 from config import DevConfig, TestConfig
+import datetime
 
 app = Flask(__name__)
 
@@ -95,18 +96,73 @@ def dashboard():
 
 #project page
 
-@app.route('/project/<int:project_id>')
+@app.route('/project/<int:project_id>', methods = ['GET', 'POST'])
 @login_required
 def project(project_id):
-    user_id = current_user.id
-    access = Project.query.filter_by(userID =user_id, id = project_id).first()
-    if access: 
-        return render_template('project.html', project_name = access.projectName)
+    if request.method == 'GET':
+        user_id = current_user.id
+        access = Project.query.filter_by(userID =user_id, id = project_id).first()
+        if access: 
+            return render_template('project.html', project = access)
+          #  return render_template('project.html', project_name = access.projectName, project_id = access.id)
     
+        else: 
+            return 'no access'
+
     else: 
-        return 'no access'
-    
+        return'invalid action'
+
+#timer control routes
+@app.route('/start/<int:project_id>', methods = ['POST'])
+def startTime(project_id):
+    if request.method == 'GET':
+        user_id = current_user.id
+        access = Project.query.filter_by(userID =user_id, id = project_id).first()
+        if access: 
+            #timestamp = Timestamp(projectID=project_id,startTime = None, endTime = None)
+            return('asd')
+            #db.session.add(timestamp)
+            
+            #db.session.commit()
+            
+        else: 
+            return 'no access'
+        
+@app.route('/stop/<int:project_id>', methods = ['POST'])
+def stopTime(project_id):
+    if request.method == 'POST':
+        user_id = current_user.id
+        access = Project.query.filter_by(userID =user_id, id = project_id).first()
+        if access: 
+            ##see if there is a timer already running (only starttime, no endtime)
+            currentTimestamp = Timestamp.query(projectID = project_id, endTime = None)
+            if currentTimestamp: 
+                currentTimestamp.endTime = datetime.datetime.now()
+            else: 
+                return 'no timestamp to be stopped'
+        else: 
+            return 'no access'
+        
+
 
 
 if __name__ == '__main__':
     app.run()
+
+
+"""@app.route('/pause/<int:project_id>', methods = ['POST'])
+def pauseTime(project_id):
+    if request.method == 'POST':
+        user_id = current_user.id
+        access = Project.query.filter_by(userID =user_id, id = project_id).first()
+        if access: 
+            #if timestamp wasnt paused
+            if not session.get('timestamp.Pause'): 
+                session ['timestampPause'] = datetime.datetime.now()
+            #if timestamp is paused
+            if not session.get('timestamp.Pause'): 
+                
+
+        else: 
+            return 'no access'     
+"""

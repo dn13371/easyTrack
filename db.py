@@ -28,5 +28,5 @@ class Timestamp(db.Model, UserMixin):
     projectID = db.Column(db.String, nullable=False)
     activity = db.Column(db.String, nullable=False)
     startTime = db.Column(db.Time, nullable=False)
-    endTime = db.Column(db.Time, nullable=False)
+    endTime = db.Column(db.Time, nullable=True)
  
