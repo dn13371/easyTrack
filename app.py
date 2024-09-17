@@ -108,13 +108,13 @@ def project(project_id):
                 running = 1
                 now = datetime.datetime.now()
                 diff = now - runningTimestamp.startTime
-                timediff = diff.seconds
+                timediff = int(diff.total_seconds() * 1000)  
 
 
             else:
                 running = 0 
-                timediff = None   
-            return render_template('project.html', project = access, running  = running, seconds = timediff)
+                timediff = 0   
+            return render_template('project.html', project = access, running  = running, milliseconds = timediff)
           #  return render_template('project.html', project_name = access.projectName, project_id = access.id)
     
         else: 
@@ -141,6 +141,7 @@ def startTime(project_id):
             return jsonify({'success': False}), 403 
         
 @app.route('/stop/<int:project_id>', methods = ['POST'])
+@login_required
 def stopTime(project_id):
     if request.method == 'POST':
         user_id = current_user.id
@@ -156,7 +157,31 @@ def stopTime(project_id):
                 return jsonify({'success': False}) , 403
         else: 
             return jsonify({'success': False}) , 403
-        
+
+##load all timestamps 
+@app.route('/load/<int:project_id>', methods = ['POST'])
+@login_required
+def loadtimestamps(project_id):
+    if request.method == 'POST': 
+        user_id = current_user.id
+        access = Project.query.filter_by(userID =user_id, id = project_id).first()
+        if access: 
+            timestamps = Timestamp.query.filter(Timestamp.projectID == project_id, Timestamp.endTime != None).all()
+            timestamps_list = []
+            for timestamp in timestamps: 
+                timestamps_list.append({
+                    'id': timestamp.id, 
+                    'tag': timestamp.activity, 
+                    'start': timestamp.startTime.isoformat(),
+                    'end': timestamp.endTime.isoformat()
+                }
+                )
+            return jsonify({'timestamps': timestamps_list})
+        else: 
+            return jsonify({'success': False}) , 403
+    else: 
+        return jsonify({'success': False}) , 403
+
 
 
 

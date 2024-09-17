@@ -130,19 +130,13 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Timstamp ID</th>
+                                            <th>Tag</th>
                                             <th>Start</th>
                                             <th>End</th>
                                             <th>Total</th>               
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td> {{ project.id }}</td>
-                                            <td>Placeholder</td>
-                                            <td>2024-09-06</td>
-                                        </tr>
-
+                                    <tbody id="timestampTableBody">
                                         
                                     </tbody>
                                 </table>
@@ -151,18 +145,7 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <!-- Use an anchor tag to make the header clickable -->
-                                <a href="https://www.pornhub.com" target="_blank" class="stretched-link text-decoration-none">
-                                    Archived Activity
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
 
             </div>
         </div>
@@ -176,18 +159,82 @@
    
     <script>
         //hide start button if timer is running 
+        const projectID = {{ project.id }}; 
         let runningtimer = {{running}};
-        let timediff  = {{seconds}};
+        let initialtimediff  = {{milliseconds}};
+        let interval;
+        let timediff = initialtimediff 
+       
         
         if (runningtimer === 1){
             const startButton = document.getElementById('start_timer');
             startButton.style.visibility = 'hidden';
             startButton.style.pointerEvents = 'none';
+            startTimer();
+            console.log(initialtimediff/1000);
         };
         //function to update the timer 
+        function updateTime(){
+            const days = Math.floor(timediff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timediff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timediff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timediff % (1000 * 60)) / 1000);
 
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
 
+        }
+        function startTimer(){
+            const starttime = Date.now() - timediff ;
+            interval = setInterval(
+                function(){
+                    timediff = Date.now()- starttime;
+                    updateTime();
+                }, 1000
+            );
+            runningtimer = 1;
+        }
+        function stopTimer() {
+            clearInterval(interval);
+            runningtimer = 0;
+        }
+        // function to fetch the timestamps
+        
 
+        function fetchTimestamps(){
+            fetch(`/load/${projectID}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+
+    })
+                .then(response=> response.json())
+                .then(data => {
+                    console.log('asdasd')
+                    const tableBody = document.getElementById('timestampTableBody')
+                    tableBody.innerHTML = '';
+                    data.timestamps.forEach(timestamp => {
+                        const startTime = new Date(timestamp.startTime).toLocaleString();
+                        const endTime = new Date(timestamp.endTime).toLocaleString();
+                        const totalTime = new Date(new Date(timestamp.endTime) -  new Date(timestamp.startTime)).toLocaleDateString();
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                <td>${timestamp.id}</td>
+                                <td>${startTime}</td>
+                                <td>${endTime}</td>
+                                <td>${totalTime}</td>
+                            `;
+                        tableBody.appendChild(row);
+                    })
+                } 
+
+                )
+        }
+        
 
 
         // start button DIE BUTTONS FUNKTIONIEREN ENDLICH HIER NIX ANFASSEN NIEMALS 
@@ -204,9 +251,13 @@
         'Content-Type': 'application/json',}})
         .then(response => response.json())
         .then(data => {
-            if (data.success) {alert('Timer started successfully!');
+            if (data.success) {
+                alert('Timer started successfully!');
+                // maybe auf 0 resetten?
+                timediff = 0;
+                startTimer();                
 
-        } 
+            } 
             else {alert('Failed to start timer.'); 
                 button.style.backgroundColor = '';
                 button.style.pointerEvents = '';
@@ -233,7 +284,10 @@
         'Content-Type': 'application/json',}})
         .then(response => response.json())
         .then(data => {if (data.success) {
+            stopTimer();
+            fetchTimestamps();
             alert('Timer stopped successfully!');
+
 
         } 
         else {alert('Failed to stop timer.'); 
@@ -245,6 +299,8 @@
         button.style.pointerEvents = '';
         });
         });
+
+
     </script>
 </body>
 </html>
