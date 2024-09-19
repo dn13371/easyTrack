@@ -112,11 +112,29 @@
                                         <span id="seconds" class="display-4">00</span>
                                         <p class="small text-muted">Seconds</p>
                                     </div>
+                                    
+                                </div>
+                                <div class="word-input mb-4 d-flex justify-content-center">
+                                    <input type="text" id="wordInput" class="form-control w-50" placeholder="Enter a Tag">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- Line Chart -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Time Distribution 
+                            </div>
+                            <div class="card-body">
+                                <canvas id="lineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 
 
                 <!-- Recent Timestamp -->
@@ -216,39 +234,96 @@
                     console.log('asdasd')
                     const tableBody = document.getElementById('timestampTableBody')
                     tableBody.innerHTML = '';
+                    const tags = [];
+                    let totaltimeChart = 0;
                     data.timestamps.forEach(timestamp => {
-                        const startTime = new Date(timestamp.startTime).toLocaleString();
-                        const endTime = new Date(timestamp.endTime).toLocaleString();
-                        const totalTime = new Date(new Date(timestamp.endTime) -  new Date(timestamp.startTime)).toLocaleDateString();
-                        
+                        //this stuff only works with milliseconds removed?? HUHHH
+                        const startTime = new Date(timestamp.start.split('.')[0]).toLocaleString();
+                        const endTime = new Date(timestamp.end.split('.')[0]).toLocaleString();
+                        const totalTimeMs = new Date(timestamp.end.split('.')[0]) - new Date(timestamp.start.split('.')[0]);
+                        const totalTime = new Date(totalTimeMs).toISOString().substr(11, 8);  
+                        totaltimeChart = totaltimeChart + totalTimeMs;
+                        if (tags.includes(timestamp.tag)){
+                            console.log('tag already included');
+                            
+                        }
+                        else{
+                            tags.push(timestamp.tag);
+                        }
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                                <td>${timestamp.id}</td>
+                                <td>${timestamp.tag}</td>
                                 <td>${startTime}</td>
                                 <td>${endTime}</td>
                                 <td>${totalTime}</td>
                             `;
                         tableBody.appendChild(row);
+                        console.log(totaltimeChart);
+                        console.log(tags)
                     })
+                    
+                    //get data for linechart
+                    const ctx = document.getElementById('lineChart').getContext('2d');
+                    let times = [];
+                    tags.forEach(tag =>{
+                        let timePerTag = 0;
+                        data.timestamps.forEach(timestamp =>{              
+                            if (tag == timestamp.tag){
+                                const totalTimeMs = new Date(timestamp.end.split('.')[0]) - new Date(timestamp.start.split('.')[0]);
+                                timePerTag = timePerTag + totalTimeMs;
+
+                            }
+
+                        })
+                        times.push(timePerTag/60000)
+                    })
+                    console.log(times)
+                    //chart
+                    const lineChart = new Chart(ctx, {
+                        type: 'line', 
+                        data: {
+                            labels: tags, 
+                            datasets:[{
+                                label: 'minutes', 
+                                data: times, 
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                fill: true
+                            }]
+                        }
+                    })
+
+
+               
                 } 
 
                 )
         }
         
-
+        document.addEventListener('DOMContentLoaded', fetchTimestamps);
 
         // start button DIE BUTTONS FUNKTIONIEREN ENDLICH HIER NIX ANFASSEN NIEMALS 
        document.getElementById('start_timer').addEventListener('click', function(){
        const projectID = {{ project.id }}; 
        const button = this;
        const stopbutton = document.getElementById('end_timer');
+
+       const tagContentBox = document.getElementById('wordInput');
+       const tagContent = tagContentBox.value;
        stopbutton.style.visibility = '';
        stopbutton.style.pointerEvents = '';
        button.style.visibility = 'hidden';
        button.style.pointerEvents = 'none';
-        fetch(`/start/${projectID}`, {  method:'POST',
+        fetch(`/start`, {  method:'POST',
         headers: {
-        'Content-Type': 'application/json',}})
+        'Content-Type': 'application/json',
+        
+    }, 
+    body: JSON.stringify({
+        projectID: projectID,
+        tagContent: tagContent
+    })
+})
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -270,6 +345,7 @@
 
         });
         });
+        
         //end button 
         document.getElementById('end_timer').addEventListener('click', function(){
        const projectID = {{ project.id }};

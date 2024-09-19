@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
  
 class Project(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    #user ID of Project Owner / Creator
     userID = db.Column(db.String, nullable=False)
     projectName = db.Column(db.String, nullable=False)
     #status 1 = current, status 2 = archived
@@ -29,4 +30,4 @@ class Timestamp(db.Model, UserMixin):
     activity = db.Column(db.String, nullable=True)
     startTime = db.Column(db.DateTime, nullable=False)
     endTime = db.Column(db.DateTime, nullable=True)
- 
+

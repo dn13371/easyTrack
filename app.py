@@ -124,14 +124,18 @@ def project(project_id):
         return'invalid action'
 
 #timer control routes
-@app.route('/start/<int:project_id>', methods = ['POST'])
+@app.route('/start', methods = ['POST'])
 @login_required
-def startTime(project_id):
+def startTime():
     if request.method == 'POST':
+        data=request.get_json()
+        project_id = data.get('projectID')
+        tag_content = data.get('tagContent')
+        print(tag_content)
         user_id = current_user.id
         access = Project.query.filter_by(userID =user_id, id = project_id).first()
         if access: 
-            timestamp = Timestamp(projectID=project_id,startTime = datetime.datetime.now(), endTime = None)
+            timestamp = Timestamp(projectID=project_id,startTime = datetime.datetime.now(), endTime = None, activity = tag_content)
             db.session.add(timestamp)
             db.session.commit()
             return jsonify({'success': True}) 
@@ -176,6 +180,7 @@ def loadtimestamps(project_id):
                     'end': timestamp.endTime.isoformat()
                 }
                 )
+                
             return jsonify({'timestamps': timestamps_list})
         else: 
             return jsonify({'success': False}) , 403
