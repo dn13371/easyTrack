@@ -1,4 +1,4 @@
-from db import db, User, Project
+from db import db, User, Project, Access
 from faker import Faker
 
 
@@ -21,4 +21,9 @@ def populate(db):
         )
         db.session.add(user)
         db.session.add(project)
+    access = Access(
+            userID = 11,
+            projectID = 1
+        )    
+    db.session.add(access)
     db.session.commit()

@@ -64,37 +64,7 @@
     </nav>
 
     <div class="wrapper">
-        
-
-        <!-- Main Content -->
         <div class="main-content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card text-white bg-primary">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Users</h5>
-                                <p class="card-text">1,024</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-success">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Sales</h5>
-                                <p class="card-text">$5,023</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-warning">
-                            <div class="card-body">
-                                <h5 class="card-title">Pending Orders</h5>
-                                <p class="card-text">12</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Pie Chart Section -->
                 <div class="row">
@@ -109,7 +79,57 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <!-- Use an anchor tag to trigger the modal instead of linking to an external URL -->
+                                <a href="#" class="stretched-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Create New Project
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+
+                <!-- Create Project Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Create New Project</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="createProjectForm">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
+                                        <button class="btn btn-outline-secondary" type="button" id="addProjectButton">Add Project</button>
+                                    </div>
+                                    <div class="input-group mb-3"></div>
+                                        <input type="text" class="form-control" id="userID" placeholder="Invite with UserID">
+                                        <button class="btn btn-outline-secondary" type="button" id="addUserButton">Add Access</button>
+                                    </div>
+                                </form>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>UserID</th>              
+                                            <th>Remove</th>              
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        
+                                    </tbody>
+                                </table>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                
                 <!-- Recent Activity Table -->
                 <div class="row">
                     <div class="col-lg-12">
@@ -144,23 +164,18 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <!-- Use an anchor tag to make the header clickable -->
-                                <a href="https://www.pornhub.com" target="_blank" class="stretched-link text-decoration-none">
-                                    Archived Activity
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+                
+                
+
+                
+
+                
 
             </div>
         </div>
     </div>
+</div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -188,6 +203,151 @@
                 }
             }
         });
+
+
+
+
+
+        //creating project stuff 
+        let newProjectID ;
+        
+        function fetchUsers(){
+            fetch(`/access/${newProjectID}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+                },
+
+            })
+            .then(response => response.json())
+            .then (data => {
+                const tableBody = document.getElementById('usersTableBody');
+                
+
+                tableBody.innerHTML = ''; 
+                data.collaborators.forEach(collaborator => {
+                    const row = document.createElement ('tr');
+                    row.innerHTML = `
+                                <td>${collaborator.userName}</td>
+                                <td>${collaborator.userID}</td>
+                                <td>
+                                <button class="remove-btn" data-userid="${collaborator.userID}">Remove</button>
+                                </td>
+                                `;
+                    tableBody.appendChild(row);
+
+                    const button = row.querySelector('.remove-btn');
+
+                    button.addEventListener('click', function(){
+                        const userID = this.getAttribute('data-userid');
+                        console.log(`Remove button clicked for user ID: ${userID}`)
+                        fetch(`/revokeaccess`, {  method:'POST',
+                                headers: {
+                                'Content-Type': 'application/json',
+                                         }, 
+                                body: JSON.stringify({
+                                projectID: newProjectID,
+                                userID: userID
+                                })
+                            })
+                        .then(response => response.json())
+                        .then(data => {
+                        if (data.success) {
+                            alert('Access removed successfully');
+                            console.log(data.success)
+                            fetchUsers()
+                        } 
+                        else {alert('Cant remove the Owners Access'); }
+                        })
+
+                    })
+                }
+                
+
+
+                )
+                
+
+            })
+        }
+
+
+        document.getElementById('addUserButton').addEventListener('click', function(){
+            const button = this; 
+            const userIDField = document.getElementById('userID'); 
+            const userID = userIDField.value;
+            if(userID==''){
+                alert('Enter a userID'); 
+                return 
+            }
+            fetch(`/gainaccess`, {  method:'POST',
+            headers: {
+            'Content-Type': 'application/json',
+              }, 
+            body: JSON.stringify({
+            projectID: newProjectID,
+            userID: userID
+        })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('user added succesfully');
+                console.log(data.success)
+
+                fetchUsers()
+            } 
+            else {alert('Failed to give user acccess'); }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+
+        });
+
+        
+        }
+
+        )
+
+        document.getElementById('addProjectButton').addEventListener('click', function(){
+            const button = this; 
+            const projectNameField = document.getElementById('projectName');
+            const projectName  = projectNameField.value;
+            console.log(projectName); 
+            if (projectName == ''){
+                alert('Enter a project Name');
+                return
+            }
+
+            fetch(`/create`, {  method:'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        }, 
+        body: JSON.stringify({
+        projectName: projectName,
+        })
+        })
+        .then(reponse => reponse.json())
+        .then(data => {
+            if (data.new_project_id) {
+                alert('project created succesfully');
+                newProjectID = data.new_project_id;
+                button.style.visibility = 'hidden';
+                console.log(newProjectID);
+                fetchUsers()
+            } 
+            else {alert('Failed to create project'); }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+
+        });
+        });
+        
+
+        
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

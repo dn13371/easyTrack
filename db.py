@@ -31,3 +31,7 @@ class Timestamp(db.Model, UserMixin):
     startTime = db.Column(db.DateTime, nullable=False)
     endTime = db.Column(db.DateTime, nullable=True)
 
+class Access (db.Model, UserMixin): 
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  
+    projectID = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False) 
