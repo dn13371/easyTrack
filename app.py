@@ -25,7 +25,9 @@ def load_user(user_id):
 @app.cli.command('init-db')
 def init_db(): 
     db_services.create(db)
-    db_services.populate(db)
+
+    #OPTIONAL: Mock Data and Users can be gerated using this !!! 
+   # db_services.populate(db)
 @app.cli.command('drop-db')
 def drop_db(): 
     db.drop_all()
@@ -276,14 +278,19 @@ def gainaccess():
 
     if access: 
         return jsonify({'success': False})
-    else: 
-        newAccess = Access(
-            userID = user_id, 
-            projectID = projectID
-        )
-        db.session.add(newAccess)
-        db.session.commit()
-        return jsonify({'success': True})
+    else:
+        user = User.query.filter_by(id = user_id).first()
+        if user: 
+            newAccess = Access(
+                userID = user_id, 
+                projectID = projectID
+            )
+            db.session.add(newAccess)
+            db.session.commit()
+            return jsonify({'success': True})
+        else: 
+            return jsonify({'success': False})
+
 ##route to revoke access to a project 
 @app.route('/revokeaccess', methods = ['POST'])
 @login_required 
