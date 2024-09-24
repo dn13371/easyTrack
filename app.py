@@ -248,18 +248,18 @@ def access(project_id):
         access = Access.query.filter_by(userID=user_id, projectID=project_id).first()
         owner = Project.query.filter_by(userID=user_id, id=project_id).first()
 
-        if access or owner:  # Allow access if the user is a collaborator or the owner
+        if access or owner:  
             collaborators = Access.query.filter(Access.projectID == project_id).all()
             collaborator_list = []
 
             for collaborator in collaborators:
-                user = User.query.filter_by(id=collaborator.userID).first()  # Correct query to fetch collaborator's info
+                user = User.query.filter_by(id=collaborator.userID).first() 
                 collaborator_list.append({
-                    'userID': collaborator.userID,  # Correct to collaborator's userID
-                    'userName': user.username,      # Get the collaborator's username
+                    'userID': collaborator.userID,  
+                    'userName': user.username,    
                 })
 
-            return jsonify({'collaborators': collaborator_list})  # Use 'collaborators' key
+            return jsonify({'collaborators': collaborator_list})
         else:
             return jsonify({'success': False}), 403
     else:         
