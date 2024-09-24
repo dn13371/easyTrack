@@ -51,14 +51,13 @@
     <nav class="navbar navbar-dark">
         <a class="navbar-brand" href="#">{{project.projectName}}</a>
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                User
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{username}}
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                <a class="dropdown-item" href="#">Profile</a>
-                <a class="dropdown-item" href="#">Settings</a>
+                <a class="dropdown-item" href="#">UserID: {{userid}}</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Logout</a>
+                <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
             </div>
         </div>
     </nav>
@@ -140,8 +139,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <!-- Use an anchor tag to trigger the modal instead of linking to an external URL -->
-                                <a href="#" class="stretched-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    Create New Project
+                                <a href="#" class="stretched-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal" id = "openModalButton">
+                                   Manage This Project
                                 </a>
                             </div>
                         </div>
@@ -153,23 +152,25 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Create New Project</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">{{project.projectName}}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <form id="createProjectForm">
                                     <!-- Project Name Input -->
                                     <div class="input-group mb-3">
-                                        <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
-                                        <button class="btn btn-outline-secondary" type="button" id="addProjectButton">Add Project</button>
+                                        <span class="form-control" id="projectNameDisplay">
+                                            {{project.projectName}}
+                                        </span>
+                                        <button class="btn btn-outline-secondary" type="button" id="deleteProjectButton">Delete Project</button>
                                     </div>
-                
-                                    <!-- Invite with UserID Input -->
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" id="userID" placeholder="Invite with UserID">
                                         <button class="btn btn-outline-secondary" type="button" id="addUserButton">Add Access</button>
                                     </div>
-                                </form>
+                                </form
+                                >
+                
                 
                                 <!-- Users Table -->
                                 <table class="table table-hover">
@@ -228,6 +229,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
    
+
+
     <script>
         //hide start button if timer is running 
         const projectID = {{ project.id }}; 
@@ -354,6 +357,15 @@
         }
         
         document.addEventListener('DOMContentLoaded', fetchTimestamps);
+        document.addEventListener('DOMContentLoaded', function() {
+        if ({{ owner }} == 0) {
+        let button = document.getElementById('openModalButton');
+        if (button) {
+            button.style.visibility = 'hidden';
+        }
+         }
+            });
+
 
         // start button DIE BUTTONS FUNKTIONIEREN ENDLICH HIER NIX ANFASSEN NIEMALS 
        document.getElementById('start_timer').addEventListener('click', function(){
@@ -432,7 +444,113 @@
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script> 
 
+    document.getElementById('openModalButton').addEventListener('click', fetchUsers())
+    function fetchUsers(){
+        const projectID = {{ project.id }};        
+            fetch(`/access/${projectID}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+                },
+
+            })
+            .then(response => response.json())
+            .then (data => {
+                const tableBody = document.getElementById('usersTableBody');
+                
+
+                tableBody.innerHTML = ''; 
+                data.collaborators.forEach(collaborator => {
+                    const row = document.createElement ('tr');
+                    row.innerHTML = `
+                                <td>${collaborator.userName}</td>
+                                <td>${collaborator.userID}</td>
+                                <td>
+                                <button class="remove-btn" data-userid="${collaborator.userID}">Remove</button>
+                                </td>
+                                `;
+                    tableBody.appendChild(row);
+
+                    const button = row.querySelector('.remove-btn');
+
+                    button.addEventListener('click', function(){
+                        const userID = this.getAttribute('data-userid');
+                        console.log(`Remove button clicked for user ID: ${userID}`)
+                        fetch(`/revokeaccess`, {  method:'POST',
+                                headers: {
+                                'Content-Type': 'application/json',
+                                         }, 
+                                body: JSON.stringify({
+                                projectID: projectID,
+                                userID: userID
+                                })
+                            })
+                        .then(response => response.json())
+                        .then(data => {
+                        if (data.success) {
+                            alert('Access removed successfully');
+                            console.log(data.success)
+                            fetchUsers()
+                        } 
+                        else {alert('Cant remove the Owners Access'); }
+                        fetchUsers()
+                        })
+
+                    })
+                }
+                
+
+
+                )
+                
+
+            })
+        }
+        document.getElementById('addUserButton').addEventListener('click', function(){
+            const projectID = {{ project.id }};      
+            const button = this; 
+            const userIDField = document.getElementById('userID'); 
+            const userID = userIDField.value;
+            if(userID==''){
+                alert('Enter a userID'); 
+                return 
+            }
+            fetch(`/gainaccess`, {  method:'POST',
+            headers: {
+            'Content-Type': 'application/json',
+              }, 
+            body: JSON.stringify({
+            projectID: projectID,
+            userID: userID
+        })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('user added succesfully');
+                console.log(data.success)
+
+                fetchUsers()
+            } 
+            else {alert('Failed to give user acccess'); }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+
+        });
+
+        
+        }
+
+        )
+
+
+
+
+
+    </script>
 </body>
 </html>
 

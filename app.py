@@ -90,26 +90,61 @@ def logout():
 @login_required
 def dashboard(): 
     user_id = current_user.id
+    user = User.query.filter_by(id = user_id).first()
+
+    print(user_id)
     accessible_projects = Access.query.with_entities(Access.projectID).filter_by(userID=user_id).all()
+    if accessible_projects: 
+        print('asd')
     project_ids = [project_id[0] for project_id in accessible_projects]
     projects2 = Project.query.filter_by(userID = user_id, projectStatus = 1).all()
     projects = Project.query.filter(
-    Project.userID == user_id,
-    Project.projectStatus == 1,
     Project.id.in_(project_ids)
     ).all()
-    return render_template('dashboard.html', projects = projects)
+
+    project_labels = []
+    project_seconds = []
+    for project in projects:
+        timestamps = Timestamp.query.filter(Timestamp.projectID == project.id, Timestamp.endTime != None).all()
+        totaltime_seconds = 0
+        for timestamp in timestamps: 
+            time_difference = timestamp.endTime - timestamp.startTime  # timedelta object
+            totaltime_seconds += time_difference.total_seconds()
+        hours, remainder = divmod(totaltime_seconds, 3600) 
+        minutes, seconds = divmod(remainder, 60)
+        project.totaltime = totaltime_seconds
+        project.minutes = round(minutes)
+        project.hours = round(hours)
+        project.seconds = round(seconds)
+        project_labels.append(project.projectName)
+        project_seconds.append(totaltime_seconds)
+    chart_data = {
+    'labels': project_labels,
+    'data': project_seconds,
+    }
+
+
+
+    
+    return render_template('dashboard.html', projects = projects, userid = user_id, username = user.username, chart_data = chart_data)
 
 #project page
 
-@app.route('/project/<int:project_id>', methods = ['GET', 'POST'])
+@app.route('/project/<int:project_id>', methods = ['GET'])
 @login_required
 def project(project_id):
     if request.method == 'GET':
         user_id = current_user.id
+        owner =0
         access = Access.query.filter_by(userID =user_id, projectID = project_id).first()
         if access: 
-            project = Project.query.filter_by(userID =user_id, id = project_id).first()
+            project = Project.query.filter_by(id = project_id).first()
+            user = User.query.filter_by(id = user_id).first()
+
+            if int(project.userID) == int(user_id):
+                print(project.userID)
+                print(user_id)
+                owner = 1
 
             runningTimestamp = Timestamp.query.filter_by(projectID = project_id, endTime = None).first()
             if runningTimestamp: 
@@ -122,7 +157,9 @@ def project(project_id):
             else:
                 running = 0 
                 timediff = 0   
-            return render_template('project.html', project = project, running  = running, milliseconds = timediff)
+            
+            print(owner)
+            return render_template('project.html', project = project, running  = running, milliseconds = timediff, owner = owner, userid = user_id, username = user.username)
           #  return render_template('project.html', project_name = access.projectName, project_id = access.id)
     
         else: 
@@ -160,8 +197,6 @@ def stopTime(project_id):
     if request.method == 'POST':
         user_id = current_user.id
         access = Access.query.filter_by(userID =user_id, projectID = project_id).first()
-
-        owner = Project.query.filter_by(userID =user_id, id = project_id).first()
         if access: 
             ##see if there is a timer already running (only starttime, no endtime)
             currentTimestamp = Timestamp.query.filter_by(projectID = project_id, endTime = None).first()
@@ -281,7 +316,7 @@ def create():
     print(projectName)
     user_id = current_user.id
     project = Project(
-            userID = 11, 
+            userID = user_id, 
             projectName = projectName, 
             projectStatus = 1,
     )
