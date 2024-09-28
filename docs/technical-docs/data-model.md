@@ -8,11 +8,4 @@ nav_order: 3
 He Wang
 
 # Data Model
-
-User (#UserID, #mail, password)<br>
-Vehicle(#UserID, PlateNR)<br>
-Role(#UserID, role)<br>
-ParkingLot(#ParkinLotID, ParkingLotName)<br>
-ParkingSpace(#ParkingLotID, #ParkingSpaceID, width, length, restrictions)<br>
-Booking(#UserID, #ParkingLotID, timeStart, timeEnd)<br>
-
+![Alt text](erm.PNG "a title")
