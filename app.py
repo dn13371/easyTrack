@@ -55,7 +55,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
     
-    flash('suckess')
+    flash('Register Success')
     return redirect(url_for('login'))
 
 #login
