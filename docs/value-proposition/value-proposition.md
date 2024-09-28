@@ -27,10 +27,23 @@ I have built a WebApp, that allows you to track all your time spent working on y
 Aside from that, my WebApp allows multiple Users to track their times across one Project without worrying about this dreaded PopUp-Message: 
 ![Alt text](https://www.easeus.de/images/de/screenshot/artikel/office-datei-gesperrt.png "a title")
 ## Target user
-The target user would be organisations with limited access to parking lots, and by extension, the workers and visitors thereof. 
+The target user would be Freelancers, Students or just anyone working on different projects, that would like to get a better overview of their time usage. 
 
 
 ## Customer journey
+1. Registration 
+
+2. Login 
+
+3. Create a Project
+
+    - Invite Collaborators
+
+4. Log your Timestamp (with a tag) 
+
+5. Visualize your Time Consumption 
+
+6. Logout 
 
 
 
