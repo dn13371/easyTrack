@@ -18,13 +18,14 @@ He Wang, Alexey Kirchner, Yasin Bektas
 
 ## The problem
 
-Since the introduction of the residents' parking zone in the vicinity of the HWR, employees of the university have had problems parking their cars. The university provides parking spaces. However, there are only a limited number of parking spaces offered by the university, so not every employee can park when they come to work. Additionally, the administrative workload is pretty high considering the task at hand. 
+Imagine you are a freelance worker working on multiple projects, while collaborating with other freelance workers just like you. 
+You may have been tracking your times using good old Excel sheets, but with a growing number of projects and different activities within those projects, doing so would be quiet a time-consuming chore. 
 
 ## Our solution
 
-We want to create a software solution to increase the efficiency of parking lots, by creating a comprehensive solution to make booking parking spaces for the HWR, and for that matter, any other organization. We strive to create a web-app based approach to a streamlined process for booking parking lots in advance. 
-
-
+I have built a WebApp, that allows you to track all your time spent working on your different projects. Not even that, the WebApp allows you to visualize your time Spent on your projects and even activities(in case you decided to doomscroll during your workday) to make your time management simpler and more efficient. 
+Aside from that, my WebApp allows multiple Users to track their times across one Project without worrying about this dreaded PopUp-Message: 
+![Alt text](https://www.easeus.de/images/de/screenshot/artikel/office-datei-gesperrt.png "a title")
 ## Target user
 The target user would be organisations with limited access to parking lots, and by extension, the workers and visitors thereof. 
 

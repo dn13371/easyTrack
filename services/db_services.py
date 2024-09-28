@@ -21,6 +21,7 @@ def populate(db):
         )
         db.session.add(user)
         db.session.add(project)
+    #Falls mit Testdaten gearbeitet wird: Alle MockProjects sollen für User 11 zugänglich sein
     access = Access(
             userID = 11,
             projectID = 1
