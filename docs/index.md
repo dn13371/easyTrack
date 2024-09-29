@@ -6,25 +6,12 @@ nav_order: 0
 
 # ParkConnect
 
-ParkConnect soll eine einfache Lösung für das Buchen und Verwalten von Parkplätzen sein. 
-
+EasyTrack is the best solution to track your time!:)
 ## Team members
 
 ### He Wang 
 
  About: [Github](https://github.com/dn13371)
-
-
-
-### Yasin Bektas
-
- About: [Github](https://github.com/yabek00)
-
-
-
-### Alexey Kirchner
-
- About: [Github](https://github.com/AKir2024)
 
 
 
