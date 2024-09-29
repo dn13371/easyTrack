@@ -6,238 +6,94 @@ nav_order: 3
 
 # Design decisions
 
-{: .no_toc }
-
-<details open markdown="block">
-{: .text-delta }
-<summary>Table of contents</summary>
-+ ToC
-{: toc }
-</details>
 
 ## 01: Database
 
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
 
 ### Problem statement
 
-Die Überlegung ist in welcher Hauptsprache schreiben wir die Web-Application - DE / EN. Außerdem war im Zuge dessen die Überlegung ein dediziertes Sprachangebot zu integrieren über eine Übersetzungsmatrix aller Texte.
+How do we store Data of the WebApp?
 
 ### Decision
 
-Es wurde sich **gegen** eine Übersetzungsmatrix entschieden und für die standardisierte Benutzung von **DE** als Sprache. Entscheidung wurde gemeinschaftlich getroffen von **OGD** **RS**, wegen des zu hohen **Mehraufwands**.
+We decided to use SQL-Alchemy, since the ORM-Mapper allows us to interact directly with Objects instead of writing cumbersome SQL Queries. This also saves us the hassle of creating Objects for every table
+(for exmaple we would need a User class to user Flask-Login)
 
 ### Regarded options
 
-- Übersetzungsmatrix
-- Flask Babel
-
----
-
-## 02: Login-Prozess Speicherung
-
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-12-13
-
-### Problem statement
-
-Die Überlegung ist, wie der Login-Prozess gespeichert wird um auf geschützte Routen zuzugreifen. Möglichst mit den nativen Flask-Packages.
-
-### Decision
-
-Entschieden haben wir uns für eine Pre-Request Routine, die die UID des Users aus der Session lädt. Ist der User nicht eingeloggt, so gibt es kein Session Objekt mit der UID.
-
-### Regarded options
-
-- Via build-in Session
-- Via JWT Token
-
----
-
-## 03: Kerndarstellung des App Dashboards
-
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-11-02
-
-### Problem statement
-
-Darstellung der Kern-Application im Dashboard um die monatliche Übersicht der Ein- und Ausnahmen zu sehen.
-
-### Decision
-
-Wir haben uns zum Sankey-Diagramm entschieden, weil damit besser Flüsse optisch dargestellt werden können.
-
-### Regarded options
-
-- Sankey-Diagramm
-- Pie-Charts
-- Linien-Diagramm
-
----
-
-## 04: Auswahl der Graphic-Library
-
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-11-28
-
-### Problem statement
-
-Auswahl der Graphic-Library zur Umsetzung des Sankey-Diagramms in unseren Jinja-Templates.
-
-### Decision
-
-Plotly
-
-### Regarded options
-
-/
-
----
-
-## 05: Styling der Web-Komponenten
-
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2024-02-03
-
-### Problem statement
-
-Wie sollen die Jinja-Templates gestylet werden und wie werden die Templates strukturiert.
-
-### Decision
-
-Entschieden wurde für Bootstrap, weil es vorlesungsbegleitend ist und auf Vorerfahrung gesetzt werden kann. Desweiteren haben wir uns auch für Google Fonts entschieden. Auch hier kann auf Vorerfahrung zurückgegriffen werden und die Implementierung ist leicht. Auch Icons können hierüber verwendet werden.
-
-### Regarded options
-
-- Bootstrap | - GoogleFonts
-- TailwindCSS | - FontAwesome
-- Plain CSS | 
-
----
-
-## 06: Datenbankzugriff
-
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-12-01
-
-### Problem statement
-
-Wie soll innerhalb der Applikation auf die Datenbank zugegriffen werden.
-
-### Decision
-
-Wir haben uns für SQLAlchemy entschieden, um einen Abstraktionslayer dazwischen zu haben und die Möglichkeit die Datenbank auszutauschen ohne den Code ändern zu müssen.
-
-### Regarded options
-
+- Dedicated SQL-Server
 - SQLite
-- SQLAlchemy
-- Plain SQL
+- Firebase
 
 ---
 
-## 07: Struktureller Aufbau der Applikation
+## 02: Login Manaement
 
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-11-01
 
 ### Problem statement
 
-Aufbau der grundlegenden Applikation und das Design-Pattern.
+How do we make sure, that certain routes are only accessible to users, that are logged in?
 
 ### Decision
 
-Wir haben uns für das Factory Design als Package entschieden, um skalierbarer zu sein für die Zukunft. Das Design erwartet zwar ein höheres Konfigurationslevel, erlaubt es da durch aber, es beliebig zu erweitern. Desweiteren erleichtert diese Art des Designs die Zusammenarbeit, da Funktionalitäten in eigene Dateien gegliedert sind (Stichwort: Git-Konflikt).
+We decided to user Flask-Login to handle this task, since Flask-Login in very well documented and also allows us to work with hashed passwords out of the box. 
 
 ### Regarded options
 
-- Factory Design mit Blueprints
-  - Als Package
-  - Als App
-- App.py Design
+- Session Cookies
 
 ---
+## 03: Visualization of our Data
 
-## 08: Environment Konfiguration
-
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-12-11
 
 ### Problem statement
 
-Wie soll das Environment konfiguriert werden. Betrifft das Starten des Entwicklungsserver und der Festlegung der verwendeten Datenbank.
+How can we make sure that the user is able to quickly visualize all the data? 
 
 ### Decision
 
-Entschieden haben wir uns für das .env und .flaskenv, um unser Environment zu komfigurieren. Das bedeutet, dass in den entsprechenden Dateien, der Debug Mode, der Host und Port eingestellt werden können. Desweiteren kann da durch die Datenbank spielendleicht geändert werden und es kann festgelegt werden ob Demodaten geladen werden.
+We decided to use Chart.js for this purpose, since it is way more visually appealing than the other options. Also, using Chart.js alllows us to use Jinja to populate the JS code. 
 
 ### Regarded options
 
-- .env Datei
-- Commandline Interface
+- Matplotlib
 
 ---
 
-## 09: Pattern für den Umgang mit Formularen
+## 04: Sending requests to the Server without updating the whole Page
 
-### Meta
-
-Status
-: Work in progress - **Decided** - Obsolete
-
-Updated
-: 2023-11-05
 
 ### Problem statement
 
-Wie soll das Handling mit Formularen gestaltet sein um eine sichere und einfachere Kommunikation zwischen Client und Server sicherzustellen.
+How do we send requests to the Server without updating the whole Page(starting/stopping the timer) ? 
 
 ### Decision
 
-Wir haben uns für WTForms entschieden, da es die Flexibilität bietet, die Formulare zentral zu konfigurieren und Teile daraus wieder zu verwenden. Desweiteren kümmert sich das Modul um die sichere Übertragung der Daten und deren Form.
+We decided to use Fetch-API and created routes for that specific purpose. The Request and Repsponse Objects also allow us to move additional data within that request. 
+This #1 fact that led to this decision is that Fetch-API is native and lightweight (no external dependencies).
 
 ### Regarded options
 
-- WTForms
-- Händisch, HTML, JavaScript
+- Ajax
+- WebSockets
+- Reloading the page when a certain button is clicked
 
----
+--- 
+
+## 05: Styling of the WebApp
+
+
+### Problem statement
+
+How do we store Data of the WebApp`
+
+### Decision
+
+We decided to use SQL-Alchemy, since the ORM-Mapper allows us to interact directly with Objects instead of writing cumbersome SQL Queries. This also saves us the hassle of creating Objects for every table
+(for exmaple we would need a User class to user Flask-Login)
+
+### Regarded options
+
+- Dedicated SQL-Server
+- SQLite
+- Firebase
