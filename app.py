@@ -34,6 +34,10 @@ def drop_db():
 
 #Routes 
 
+@app.route('/')
+def index(): 
+    return redirect(url_for('login'))
+
 #register 
 @app.route('/register', methods = ['GET', 'POST'])
 def register(): 
