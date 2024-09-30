@@ -26,7 +26,7 @@ This folder contains all the HTML filed, which themselves contain some CSS and a
 This files specifies what is supposed to be tracked within the git repository.
 
 ## 07: File - app.py
-This is the main app with all the business logic associated within the WebApp such as routing, creation and deletion of the database, integration of flask-login and so on.
+This is the main app with all the business logic associated within the WebApp such as routing, creation and deletion of the database, integration of flask-login and so on. For more info on this part, see Reference. 
 
 ## 08: File - config.py
 This file has 2 Classes of different configs. This makes sure we can switch from devConfig to a testing config within app.py
