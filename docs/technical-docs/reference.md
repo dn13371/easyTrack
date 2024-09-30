@@ -4,102 +4,112 @@ parent: Technical Docs
 nav_order: 4
 ---
 
-{: .label }
-
-
 # Reference 
 
-# CLI Commands
+## CLI Commands
 
-# Routes
+## Routes
 
-## Register
+### Register
 
-### `register()`
+#### `register()`
 
-**Route:** `/register`
+- **Route:** `/register`
+- **Methods:** `POST`, `GET`
+- **Purpose:** 
+  Renders the register page, containing the logic for the registration process.
 
-**Methods:** `POST` `GET`
+- **Sample output:**
+  ![register](register.PNG)
 
-**Purpose:** 
-Renders the register page, whilst containing the logic for the registation process
+### Login
 
-**Sample output:**
-![register](register.PNG)
+#### `login()`
 
-## Login
+- **Route:** `/login`
+- **Methods:** `POST`, `GET`
+- **Purpose:** 
+  Renders the login page, containing the logic for the login process.
 
-### `login()`
+- **Sample output:**
+  ![login](login.PNG)
 
-**Route:** `/login`
+### Dashboard
 
-**Methods:** `POST` `GET`
+#### `dashboard()`
 
-**Purpose:** 
-Renders the login page, whilst containing the logic for the login process
+- **Route:** `/dashboard`
+- **Purpose:** 
+  Provides the user an overview of their projects and time consumption. Users can also create new projects from this page.
 
-**Sample output:**
-![register](login.PNG)
+- **Sample output:**
+  ![dashboard](dashboard.PNG)
+  ![dashboard_modal](dashboard_modal.PNG)
 
-## Dashboard
-### `dashboard()`
-**Route:** `/dashboard`
-**Purpose:** 
-Give the user a overview of their projects and their time consumption in general. The user is also allowed to create new projects whilst on this page. 
+### Project
 
-**Sample output** 
-![register](dashboard.PNG)
-![register](dashboard_modal.PNG)
+#### `/project/(int : project_id)`
 
-## Project
-### `/project/(int : project_id)`
-**Route:** `/project/ int: id`
-**Purpose:** 
-Lets the user track their timestamps within a given project. If the user is the Owner of the project, they can also manage the project. This Route also allows visualization of the time spend on a given project. 
+- **Route:** `/project/ int: id`
+- **Purpose:** 
+  Lets the user track their timestamps within a given project. If the user is the owner of the project, they can also manage it. This route also visualizes the time spent on a given project.
 
-**Sample output** 
-![register](project.PNG)
-![register](project_modal.PNG)
+- **Sample output:**
+  ![project](project.PNG)
+  ![project_modal](project_modal.PNG)
 
-## Timer control routes
-### `startTime`; `stopTime`
-**Route:** `/start`; `/stop`
-**Purpose:** 
-These routes are built for the Fetch-API to start or stop timers. If the Timer was started or stopped successfully, the routes return a JSON containing the Success-Status
+### Timer Control Routes
 
-## Loading timestamps
-### `loadtimestamps(project_id)`
-**Route:** `/load/(int : project_id)`
-**Purpose:** 
-This route is built for the Fetch-API to load all timestamps belonging to a certain project. This route returns a JSON containing all the timestamps or an error code.
+#### `startTime`; `stopTime`
 
+- **Route:** `/start`, `/stop`
+- **Purpose:** 
+  These routes are built for the Fetch API to start or stop timers. If the timer was started or stopped successfully, the routes return a JSON containing the success status.
 
-## Loading collaborators for a project
-### `access(project_id)`
-**Route:** `/access/(int : project_id)`
-**Purpose:**
-This route is built for the Fetch-API to load all the collaborators belonging to a certain project. This route returns a JSON containing all the collaborators or an error code. 
+### Loading Timestamps
 
-## Adding collaborators for a project
-### `gainaccess()`
-**Route:** `/gainaccess`
-**Purpose:**
-This route is built for the Fetch-API to add a new user to the collaborators. This route returns a status code for whether adding the collaborator was successful. 
-## Deleting collaborators for a project
-### `revokeaccess()`
-**Route:** `/revokeaccess`
-**Purpose:**
-This route is built for the Fetch-API to remove collaborators. This route returns a status code for whether adding the collaborator was successful. 
+#### `loadtimestamps(project_id)`
 
-##  Create a new project
-### `create()`
-**Route:** `/create`
-**Purpose:**
-This route is built for the Fetch-API to create a new project. If the creation was successful, this route returns the projectID of the newly created project.
+- **Route:** `/load/(int : project_id)`
+- **Purpose:** 
+  This route is built for the Fetch API to load all timestamps belonging to a certain project. The route returns a JSON containing all timestamps or an error code.
 
+### Loading Collaborators for a Project
 
-## Delete a project
-### `delete()`
-**Route:** `/delete`
-**Purpose:**
-This route is built for the Fetch-API to delete a project. If the deletion was successful, this route returns a status code. 
+#### `access(project_id)`
+
+- **Route:** `/access/(int : project_id)`
+- **Purpose:** 
+  This route is built for the Fetch API to load all collaborators associated with a project. The route returns a JSON containing all the collaborators or an error code.
+
+### Adding Collaborators for a Project
+
+#### `gainaccess()`
+
+- **Route:** `/gainaccess`
+- **Purpose:** 
+  This route is built for the Fetch API to add a new user as a collaborator to the project. The route returns a status code indicating whether adding the collaborator was successful.
+
+### Deleting Collaborators for a Project
+
+#### `revokeaccess()`
+
+- **Route:** `/revokeaccess`
+- **Purpose:** 
+  This route is built for the Fetch API to remove a collaborator from the project. The route returns a status code indicating whether removing the collaborator was successful.
+
+### Create a New Project
+
+#### `create()`
+
+- **Route:** `/create`
+- **Purpose:** 
+  This route is built for the Fetch API to create a new project. If successful, the route returns the `projectID` of the newly created project.
+
+### Delete a Project
+
+#### `delete()`
+
+- **Route:** `/delete`
+- **Purpose:** 
+  This route is built for the Fetch API to delete a project. If successful, the route returns a status code indicating success.
