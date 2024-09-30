@@ -1,32 +1,123 @@
 ---
-title: App Behavior
+title: Reference
 parent: Technical Docs
-nav_order: 2
+nav_order: 4
 ---
 
+# Reference 
+
+## CLI Commands
 
 
-# App Behavior
-## Business Logic
+### Init-DB
 
-1. ** Registration and Login**
+#### `init_db()`
+- **Route:** `flask init-db`
+- **Purpose:** 
+Initializes and optionally populates the database
 
-Upon Registration, a User object is created. This User object is also being used inside the login process to verify the users credentials. 
+### Drop-DB
 
-2. ** Creating Project and inviting collaborators **
-
-Upon creating a project, a Project object and a Access object are created. For each each collaborator the user decides to invite to the project, a new Access object is created. 
-
-3. ** Visualization - dashboard**
-
-The dashboard shows all projects the user can access and aggregates all timestamps for a given project. The aggregated timestamps are being show in a chart.
-
-4. ** Creating a timestamp **
-
-Upon starting a timestamp, a Timestamp object without a ending time is being created. The ending time will be added to the timestamp when the stop button gets pressed. By that logic, the timstamps will keep running even when the user logs off or closes the tab. 
-
-5. ** Managing your Project **
-
-If you own a project, you can make changes to it. These include adding or removing collaborators or deleting the project. 
+#### `drop_db()`
+- **Route:** `flask drop-db`
+- **Purpose:** 
+Completely drops the existing database. 
 
 
+## Routes
+
+### Register
+
+#### `register()`
+
+- **Route:** `/register`
+- **Methods:** `POST`, `GET`
+- **Purpose:** 
+  Renders the register page, containing the logic for the registration process.
+
+- **Sample output:**
+  ![register](register.PNG)
+
+### Login
+
+#### `login()`
+
+- **Route:** `/login`
+- **Methods:** `POST`, `GET`
+- **Purpose:** 
+  Renders the login page, containing the logic for the login process.
+
+- **Sample output:**
+  ![login](login.PNG)
+
+### Dashboard
+
+#### `dashboard()`
+
+- **Route:** `/dashboard`
+- **Purpose:** 
+  Provides the user an overview of their projects and time consumption. Users can also create new projects from this page.
+
+- **Sample output:**
+  ![dashboard](dashboard.PNG)
+  ![dashboard_modal](dashboard_modal.PNG)
+
+### Project
+
+#### `/project/(int : project_id)`
+
+- **Route:** `/project/ int: id`
+- **Purpose:** 
+  Lets the user track their timestamps within a given project. If the user is the owner of the project, they can also manage it. This route also visualizes the time spent on a given project.
+
+- **Sample output:**
+  ![project](project.PNG)
+  ![project_modal](project_modal.PNG)
+
+### Timer Control Routes
+
+#### `startTime`; `stopTime`
+
+- **Route:** `/start`, `/stop`
+- **Purpose:** 
+  These routes are built for the Fetch API to start or stop timers. If the timer was started or stopped successfully, the routes return a JSON containing the success status.
+
+### Loading Timestamps
+
+#### `loadtimestamps(project_id)`
+
+- **Route:** `/load/(int : project_id)`
+- **Purpose:** 
+  This route is built for the Fetch API to load all timestamps belonging to a certain project. The route returns a JSON containing all timestamps or an error code.
+
+### Loading Collaborators for a Project
+
+#### `access(project_id)`
+
+- **Route:** `/access/(int : project_id)`
+- **Purpose:** 
+  This route is built for the Fetch API to load all collaborators associated with a project. The route returns a JSON containing all the collaborators or an error code.
+
+### Adding Collaborators for a Project
+
+#### `gainaccess()`
+
+- **Route:** `/gainaccess`
+- **Purpose:** 
+  This route is built for the Fetch API to add a new user as a collaborator to the project. The route returns a status code indicating whether adding the collaborator was successful.
+
+### Deleting Collaborators for a Project
+
+#### `revokeaccess()`
+
+- **Route:** `/revokeaccess`
+- **Purpose:** 
+  This route is built for the Fetch API to remove a collaborator from the project. The route returns a status code indicating whether removing the collaborator was successful.
+
+### Create a New Project
+
+#### `create()`
+
+- **Route:** `/create`
+- **Purpose:** 
+  This route is built for the Fetch API to create a new project. If
