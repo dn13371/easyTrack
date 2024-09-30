@@ -3,72 +3,64 @@ title: User Evaluation
 nav_order: 4
 ---
 
-{: .label }
-[Jane Dane]
-
-{: .no_toc }
 # User evaluation
 
 <details open markdown="block">
-{: .text-delta }
-<summary>Table of contents</summary>
-+ ToC
-{: toc }
+<summary>Table of Contents</summary>
+
+- [01: Registration and Login](#01-registration-and-login)
+- [02: Creating a project and inviting collaborators](#02-creating-a-project-and-inviting-collaborators)
+
 </details>
 
 ## 01: Registration and Login
 
 ### Meta
 
-Status
-: Work in progress - **Done** - Obsolete
+**Status**: Work in progress - **Done** - Obsolete
 
-Updated
-: 30-09-2024
+**Updated**: 30-09-2024
 
 ### Goal
 
-During this part of the evaluation we wanted to see if the registration and login process would be logical for the average user. 
+During this part of the evaluation, we wanted to see if the registration and login process would be logical for the average user.
 
 ### Method
 
-In this case, I instructed the test subject (my girlfriend) to create an account and log in with her chosen credentials, while i tracked the time. 
+I instructed the test subject (my girlfriend) to create an account and log in with her chosen credentials, while I tracked the time.
 
 ### Results
 
-During my observations, the whole process of registration could be achieved in about 30 seconds. Due to the short time needed to do so, I would suspect a rather low drop-out rate. 
+During my observations, the whole process of registration could be completed in about 30 seconds. Due to the short time required, I suspect a low drop-out rate for this process.
 
 ### Implications
 
-During the first run of this test, i realized that the register page only reloaded upon completing the registration while giving the user a popup. To streamline this, i decided to set the redirection straight to the login page after successfully registering. 
+During the first test run, I realized that the registration page only reloaded after completing the registration, showing the user a popup. To streamline this, I decided to redirect users straight to the login page after successful registration.
+
 ---
 
 ## 02: Creating a project and inviting collaborators
 
 ### Meta
 
-Status
-: Work in progress - **Done** - Obsolete
+**Status**: Work in progress - **Done** - Obsolete
 
-Updated
-: 30-09-2024
+**Updated**: 30-09-2024
 
 ### Goal
 
-The goal for this scenario would be checking if the process of creating a project and inviting a collaborator would be logical for the average user. 
+The goal of this scenario was to check if the process of creating a project and inviting a collaborator would be intuitive for the average user.
 
 ### Method
 
-In this case, I instructed the test subject (my girlfriend) to create an project and invite me as an collborator. 
-After creating the project, she had to remove me from the list of the collaborators. 
+I instructed the test subject to create a project and invite me as a collaborator. After creating the project, she was also tasked with removing me from the list of collaborators.
 
 ### Results
 
-During my observations, it got clear that the original method of adding users by their usernames was not efficient, since during my testing process, i have created multiple accounts with the same username. 
-Because of this, i made sure that collaborators have to be added by using their unique userID. 
-But this unearthed another bug: If you entered a non-existing userID, the whole Javascript part of the WebApp would crash.. 
+During my observations, it became clear that the original method of adding users by their usernames was inefficient, as I had multiple accounts with the same username. Because of this, I changed the process so that collaborators had to be added using their unique userID.
+
+However, this revealed another bug: if a non-existing userID was entered, the JavaScript part of the web app would crash.
 
 ### Implications
 
-To completely streamline this process, i had to make sure that users were being added by their userId. I also had to make sure to check whether a certain userID existed prior to adding them to the list of collaborators. 
----
+To streamline this process, I ensured that users are added by their userID. I also added checks to confirm whether a userID exists before adding them to the list of collaborators.

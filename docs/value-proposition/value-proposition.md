@@ -3,8 +3,6 @@ title: Value Proposition
 nav_order: 2
 ---
 
-{: .label }
-He Wang, Alexey Kirchner, Yasin Bektas                               
 
 # Value proposition 
 {: .no_toc }

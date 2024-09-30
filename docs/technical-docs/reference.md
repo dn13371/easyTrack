@@ -8,6 +8,22 @@ nav_order: 4
 
 ## CLI Commands
 
+### Initialize DB
+
+#### `init_db()`
+
+- **Route:** `flask init-db`
+- **Purpose:** 
+Initializes db, optionally it also populates the db with mock data.
+
+### Register
+
+#### `drop_db()`
+
+- **Route:** `flask drop-db`
+- **Purpose:** 
+Drops the current DB
+
 ## Routes
 
 ### Register
