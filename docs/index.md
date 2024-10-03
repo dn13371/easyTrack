@@ -4,7 +4,7 @@ nav_order: 0
 ---
 
 
-# ParkConnect
+# EasyTrack
 
 EasyTrack is the best solution to track your time!:)
 ## Team members
