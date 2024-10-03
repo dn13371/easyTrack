@@ -128,4 +128,4 @@ Drops the current DB
 
 - **Route:** `/delete`
 - **Purpose:** 
-  This route is built for the Fetch API to delete a project. If successful, the route returns a status code indicating success.
+  This route is built for the Fetch API to delete a project. If successful, the route returns a status code indicating success. The JS then redirects to the Dashboard. 
