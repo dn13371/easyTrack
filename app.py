@@ -344,7 +344,21 @@ def create():
     return jsonify({'new_project_id': new_project_id}) 
 
 ##delete project 
-
+@app.route('/delete', methods=['POST'])
+def delete_project():
+    data = request.get_json()
+    projectID = data.get('projectID')
+    
+    owner = Project.query.filter_by(id=projectID, userID=current_user.id).first()
+    if owner:
+        timestamps = Timestamp.query.filter_by(projectID=projectID).all()
+        for timestamp in timestamps:
+            db.session.delete(timestamp)
+        db.session.delete(owner)
+        db.session.commit()
+        return jsonify({'success': True}), 200  # Respond with success
+    else:
+        return jsonify({'error': 'Project not found'}), 404  # Respond with an error
 
 if __name__ == '__main__':
     app.run()

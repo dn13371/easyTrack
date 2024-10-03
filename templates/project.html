@@ -546,6 +546,32 @@
 
         )
 
+        document.getElementById('deleteProjectButton').addEventListener('click', function() {
+    const projectID = {{ project.id }}; 
+    const button = this;
+
+    fetch(`/delete`, {  
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            projectID: projectID,
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/dashboard';
+        } else {
+            console.error('Failed to delete project:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error during fetch request:', error);
+    });
+});
+
+
 
 
 
