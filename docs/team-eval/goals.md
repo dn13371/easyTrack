@@ -16,6 +16,7 @@ nav_order: 1
 {: toc }
 </details>
 
+
 Aside from the basic functionality of simply writing down timestamps, there are following goals that i have set out to achieve in order to provide a well-rounded WebApp, and by extension, a well-rounded user experience. These Goals go as follows: 
 
 - Basic funcionality of tracking time
@@ -31,3 +32,4 @@ Aside from the basic functionality of simply writing down timestamps, there are 
 - Animated clock(optional)
 - Having an "Admin" role(optional)
 - Structure the WebApp as packages(optional)
+
